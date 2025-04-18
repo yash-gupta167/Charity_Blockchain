@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Charity-Blockchain - Transparent Blockchain Charity Platform</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-hand-holding-heart"></i> Charity-Blockchain
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <!-- ... existing code ... -->
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#charities">Charities</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#donate">Donate</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#transactions">Transactions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#blockchain">Blockchain</a>
+                        </li>
+                    </ul>
+                    <div class="ms-3 wallet-status">
+                        <div id="metamask-status" class="disconnected">
+                            <i class="fas fa-wallet me-2"></i> Connect Wallet
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+                <!-- Hero Section -->
+                <section class="hero-section">
+                    <div class="container text-center">
+                        <h1>Transparent Charity on the Blockchain</h1>
+                        <p class="lead">Track every donation, verify every impact, and ensure your contributions make a difference.</p>
+                        <div class="account-info" id="account-info" style="display: none;">
+                            <!-- ... existing code ... -->
+                    <div class="account-card">
+                        <div class="account-details">
+                            <div class="address">
+                                <i class="fas fa-user-circle"></i>
+                                <span id="account-address"></span>
+                            </div>
+                            <div class="balance">
+                                <i class="fab fa-ethereum"></i>
+                                <span id="account-balance"></span> ETH
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="container main-content">
+            <div id="loader" class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading blockchain data...</p>
+            </div>
+
+            <div id="content">
+                <!-- Charities Section -->
+                <section id="charities" class="mb-5">
+                    <div class="section-header">
+                        <h2>Verified Charities</h2>
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addCharityModal">
+                            <i class="fas fa-plus"></i> Register Charity
+                        </button>
+                    </div>
+                    
+                    <div class="row charity-cards" id="charity-list">
+                        <!-- Charity cards will be added here dynamically -->
+                        <div class="col-md-4 charity-card-template" style="display: none;">
+                            <div class="charity-card">
+                                <div class="charity-header">
+                                    <h3 class="charity-name"></h3>
+                                    <span class="verification-badge"><i class="fas fa-check-circle"></i> Verified</span>
+                                </div>
+                                <div class="charity-body">
+                                    <p class="charity-description"></p>
+                                    <div class="charity-metrics">
+                                        <div class="metric">
+                                            <i class="fas fa-bullseye"></i>
+                                            <span class="impact-metric"></span>
+                                        </div>
+                                        <div class="metric">
+                                            <i class="fab fa-ethereum"></i>
+                                            <span class="charity-balance"></span> ETH
+                                        </div>
+                                    </div>
+                                    <div class="charity-address">
+                                        <small>Address: <span class="address-text"></span></small>
+                                    </div>
+                                </div>
+                                <div class="charity-footer">
+                                    <button class="btn btn-primary donate-btn">Donate</button>
+                                    <button class="btn btn-outline-secondary details-btn">Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Organizations Section -->
+                <section id="organizations" class="mb-5">
+                    <div class="section-header">
+                        <h2>Organizations</h2>
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addOrganizationModal">
+                            <i class="fas fa-plus"></i> Register Organization
+                        </button>
+                    </div>
+                    
+                    <div class="row organization-cards" id="organization-list">
+                        <!-- Organization cards will be added here dynamically -->
+                    </div>
+                </section>
+
+                <!-- Donate Section -->
+                <section id="donate" class="mb-5">
+                    <div class="section-header">
+                        <h2>Make a Donation</h2>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="donation-form" onSubmit="App.createTransaction(); return false;">
+                                <div class="mb-3">
+                                    <label for="charity-select" class="form-label">Select Charity</label>
+                                    <select class="form-select" id="charity-select" required>
+                                        <option value="" selected disabled>Choose a charity...</option>
+                                        <!-- Options will be added dynamically -->
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="donation-amount" class="form-label">Donation Amount (ETH)</label>
+                                    <input type="number" class="form-control" id="donation-amount" min="0.001" step="0.001" required>
+                                    <div class="form-text">Minimum donation: 0.001 ETH</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="donation-purpose" class="form-label">Purpose of Donation</label>
+                                    <input type="text" class="form-control" id="donation-purpose" placeholder="e.g., General support, Specific project, etc." required>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i> Send Donation
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Transactions Section -->
+                <section id="transactions" class="mb-5">
+                    <div class="section-header">
+                        <h2>Recent Transactions</h2>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Amount</th>
+                                            <th>Purpose</th>
+                                            <th>Date</th>
+                                            <th>Hash</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="transactions-list">
+                                        <!-- Transactions will be added here dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Blockchain Section -->
+                <section id="blockchain" class="mb-5">
+                    <div class="section-header">
+                        <h2>Blockchain Explorer</h2>
+                        <button onclick="App.blockchain_function()" class="btn btn-success">
+                            <i class="fas fa-cubes me-2"></i> Mine Transactions
+                        </button>
+                    </div>
+                    
+                    <div class="blockchain-explorer">
+                        <div class="blocks-container" id="blocks-container">
+                            <!-- Blocks will be added here dynamically -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+                <!-- Footer -->
+                <footer class="footer">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <h4><i class="fas fa-hand-holding-heart"></i> Charity-Blockchain</h4>
+                                <p>Transparent charity donations powered by blockchain technology.</p>
+                                <div class="copyright">
+                                    <p>&copy; 2023 Charity-Blockchain. All rights reserved.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+        
+                <!-- Modals -->
+                <!-- Add Charity Modal -->
+                <!-- ... existing code ... -->
+
+        <!-- Modals -->
+        <!-- Add Charity Modal -->
+        <div class="modal fade" id="addCharityModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Register New Charity</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add-charity-form" onSubmit="App.createCharity(); return false;">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Charity Name</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Ethereum Wallet Address</label>
+                                <input type="text" class="form-control" id="address" required>
+                                <div class="form-text">This address will receive donations directly.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="impact_metrics" class="form-label">Impact Metrics</label>
+                                <input type="text" class="form-control" id="impact_metrics" placeholder="e.g., Feeding 100 children daily" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Register Charity</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Organization Modal -->
+        <div class="modal fade" id="addOrganizationModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Register New Organization</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="add-organization-form" onSubmit="App.createOrganisation(); return false;">
+                            <div class="mb-3">
+                                <label for="name1" class="form-label">Organization Name</label>
+                                <input type="text" class="form-control" id="name1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address1" class="form-label">Ethereum Wallet Address</label>
+                                <input type="text" class="form-control" id="address1" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Register Organization</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charity Details Modal -->
+        <div class="modal fade" id="charityDetailsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="charity-detail-name">Charity Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="charity-details-content">
+                            <!-- Content will be added dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@truffle/contract@4.5.3/dist/truffle-contract.min.js"></script>
+    <script src="new_app.js"></script>
+</body>
+</html>
